@@ -1,8 +1,8 @@
 package edu.kh.emp.model.view;
 
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import edu.kh.emp.model.service.EmployeeService;
@@ -39,6 +39,7 @@ public class EmployeeView {
 				System.out.println("8. 부서별 급여 합 전체 조회");
 				System.out.println("9. 주민등록번호가 일치하는 사원 정보 조회");
 				System.out.println("10. 직급별 급여 평균 조회");		
+				System.out.println("11. stmt 궁금한거 진행");		
 				System.out.println("0. 프로그램 종료");
 				
 				System.out.print("메뉴 선택 >> ");
@@ -59,6 +60,7 @@ public class EmployeeView {
 				case 8:  selectDeptTotalSalary();   break;
 				case 9:  selectEmpNo();   break;
 				case 10:  selectJobAvgSalary();   break;
+				case 11:  questionStmt();   break;
 				case 0:  System.out.println("프로그램을 종료합니다...");   break;
 				default: System.out.println("메뉴에 존재하는 번호만 입력하세요.");
 				}
@@ -247,8 +249,6 @@ public class EmployeeView {
 	}
 
 	
-	
-	
 	/**  5. 사번이 일치하는 사원 정보 삭제
 	 * @throws Exception
 	 */
@@ -278,8 +278,6 @@ public class EmployeeView {
 	}
 
 
-	
-
 	/**  6. 입력 받은 부서와 일치하는 모든 사원 정보 조회
 	 * @throws Exception
 	 */
@@ -290,9 +288,12 @@ public class EmployeeView {
 		System.out.print("부서를 입력해주세요:");
 		String searchDept = sc.nextLine();
 		
+		/*
 		List<Employee> empList = service.selectDeptEmp(searchDept);
-
 		printAll(empList);
+		*/
+		printAll(service.selectDeptEmp(searchDept));
+		
 	}
 
 	
@@ -306,9 +307,17 @@ public class EmployeeView {
 		System.out.print("급여를 입력해주세요:");
 		int searchSalary = sc.nextInt();
 		
+
+		//List 사용
 		List<Employee> empList = service.selectSalaryEmp(searchSalary);
-		
 		printAll(empList);
+
+		
+		// Map사용
+//		Map<String, Object> empMap = service.selectSalaryEmp(searchSalary);
+//		printAll(empMap);
+
+		
 	}
 	
 	/** 8. 부서별 급여 합 전체 조회
@@ -318,9 +327,20 @@ public class EmployeeView {
 
 		System.out.println("<부서별 급여 합 전체 조회>");
 		
+		/*// List 사용
 		List<Employee>deptList = service.selectDeptTotalSalary();
-		
 		printDept(deptList); 
+		*/
+		
+		
+		// Map 사용
+		Map<String, Integer> deptMap = service.selectDeptTotalSalary();
+
+		for( String temp : deptMap.keySet()){ // key만 뽑아옴. 
+			System.out.println(temp + "\t | " + deptMap.get(temp));		
+		}
+
+		
 	}
 
 	
@@ -348,6 +368,26 @@ public class EmployeeView {
 		List<Employee> job = service.selectJobAvgSalary();
 		
 		printJob(job);
+		
+	}
+	
+	
+	/** 11.question Stmt 의문 진행
+	 * @throws Exception
+	 */
+	private void questionStmt() throws Exception {
+		
+		System.out.println("<query로도 int 받을 수 있나?>");
+		
+		int result = service.questionStmt();
+		
+		if(result > 0 ) {
+			System.out.println(result);
+			System.out.println("성공");
+		}else {
+			System.out.println("실패");
+		}
+		
 		
 	}
 
@@ -450,4 +490,5 @@ public class EmployeeView {
 	}
 	
 	
+
 }

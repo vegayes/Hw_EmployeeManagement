@@ -1,15 +1,18 @@
 package edu.kh.emp.model.dao;
 
+import static edu.kh.emp.common.JDBCTemplate.close;
+
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-import static edu.kh.emp.common.JDBCTemplate.*;
 import edu.kh.emp.model.vo.Employee;
 
 public class EmployeeDAO {
@@ -17,6 +20,7 @@ public class EmployeeDAO {
 	private Statement stmt;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
+
 	
 	private Properties prop;
 	
@@ -336,6 +340,7 @@ public class EmployeeDAO {
 			pstmt.setString(1,searchDept);
 			
 			rs = pstmt.executeQuery();
+		
 			
 			while(rs.next()) {
 				
@@ -367,7 +372,7 @@ public class EmployeeDAO {
 		return empList;
 	}
 
-	/** 7. 입력 받은 급여 이상을 받는 모든 사원 정보 DAO 
+	/** 7. 입력 받은 급여 이상을 받는 모든 사원 정보 DAO [List] 
 	 * @param con
 	 * @param searchSalary
 	 * @return
@@ -412,12 +417,64 @@ public class EmployeeDAO {
 		return empList;
 	}
 
-	/** 8. 부서별 급여 합 전체 조회 DAO
+	
+	/**  7. 입력 받은 급여 이상을 받는 모든 사원 정보 DAO [Map] 
+	 * @param con
+	 * @param searchSalary
+	 * @return
+	 */
+/*	public Map<String, Object> selectSalaryEmp(Connection con, int searchSalary)throws Exception {
+		---> 리스트 또 사용해서 가져와야 할듯.?
+		Map<String, Object> empMap = new HashMap<String, Object>();
+		
+		try {
+			
+			String sql = prop.getProperty("selectSalaryEmp");
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, searchSalary);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				int empId = rs.getInt("EMP_ID"); 	
+				String empName = rs.getString("EMP_NAME");
+				String empNo = rs.getString("EMP_NO");
+				String email = rs.getString("EMAIL");
+				String phone = rs.getString("PHONE");
+				String deptTitle = rs.getString("DEPT_TITLE");
+				String jobName = rs.getString("JOB_NAME");
+				int salary = rs.getInt("SALARY");
+				
+				empMap.put("EMP_ID", empName);
+				empMap.put("EMP_NAME", empName);
+				empMap.put("EMP_NO", empNo);
+				empMap.put("EMAIL", email);
+				empMap.put("PHONE", phone);
+				empMap.put("DEPT_TITLE", deptTitle);
+				empMap.put("JOB_NAME", jobName);
+				empMap.put("SALARY", salary);
+				
+			}
+			
+			
+		}finally {
+			close(rs);
+			close(pstmt);
+		}
+
+		return empMap;
+	}
+*/
+	
+	/** 8. 부서별 급여 합 전체 조회 DAO[List]
 	 * @param con
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Employee> selectDeptTotalSalary(Connection con) throws Exception {
+/*	public List<Employee> selectDeptTotalSalary(Connection con) throws Exception {
 
 		List<Employee> deptList = new ArrayList<Employee>();
 		
@@ -451,6 +508,40 @@ public class EmployeeDAO {
 		return deptList;
 	}
 
+*/
+	
+	/** 8. 부서별 급여 합 전체 조회 DAO[Map]
+	 * @param con
+	 * @return
+	 */
+	public Map<String, Integer> selectDeptTotalSalary(Connection con) throws Exception{
+
+		Map<String, Integer> deptMap = new LinkedHashMap<String,Integer>();
+										// 순서 유지 map (ORDER BY 절 정렬 결과 그대로 저장함)
+		try {
+			String sql = prop.getProperty("selectDeptTotalSalary");
+			
+			stmt = con.createStatement();
+			
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				String deptTitle = rs.getString("DEPT_TITLE");
+				int sumDept = rs.getInt("SUM_SALARY");
+				
+				deptMap.put(deptTitle, sumDept);
+				
+			}
+			
+		}finally {
+			
+			close(rs);
+			close(stmt);	
+		}
+		return deptMap;
+	}
+	
 	
 	
 	
@@ -476,18 +567,18 @@ public class EmployeeDAO {
 			rs = pstmt.executeQuery();
 	
 			
-			while(rs.next()) {
+			if(rs.next()) {
 				
 				int empId = rs.getInt("EMP_ID"); 	
 				String empName = rs.getString("EMP_NAME");
-				String empNo = rs.getString("EMP_NO");
+//				String empNo = rs.getString("EMP_NO");
 				String email = rs.getString("EMAIL");
 				String phone = rs.getString("PHONE");
 				String deptTitle = rs.getString("DEPT_TITLE");
 				String jobName = rs.getString("JOB_NAME");
 				int salary = rs.getInt("SALARY");
 				
-				emp = new Employee(empId, empName, empNo, 
+				emp = new Employee(empId, empName, searchNo, 
 						email, phone, deptTitle, jobName, salary );
 				
 			}
@@ -535,6 +626,30 @@ public class EmployeeDAO {
 
 		return jobList;
 	}
+
+	public int questionStmt(Connection con) throws Exception {
+
+		int result = 0;
+		
+		try {
+			
+			String sql = prop.getProperty("questionStmt");
+			
+			stmt = con.createStatement();
+			
+//			rs = stmt.executeQuery(sql);
+			
+			result = stmt.executeUpdate(sql);
+			
+		}finally {
+			close(stmt);
+		}
+		return result;
+	}
+
+
+
+
 
 
 

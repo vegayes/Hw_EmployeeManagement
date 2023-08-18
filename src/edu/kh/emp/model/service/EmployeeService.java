@@ -4,6 +4,7 @@ import static edu.kh.emp.common.JDBCTemplate.getConnection;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 
 import static edu.kh.emp.common.JDBCTemplate.*;
 import edu.kh.emp.model.dao.EmployeeDAO;
@@ -167,7 +168,7 @@ public class EmployeeService {
 		return empList;
 	}
 
-	/** 7. 입력 받은 급여 이상을 받는 모든 사원 정보 조회 서비스
+	/** 7. 입력 받은 급여 이상을 받는 모든 사원 정보 조회 서비스 [List]
 	 * @param searchSalary
 	 * @return
 	 * @throws Exception
@@ -183,11 +184,37 @@ public class EmployeeService {
 		return empList;
 	}
 
-	/**  8. 부서별 급여 합 전체 조회 서비스
+
+
+	
+
+	/**  7. 입력 받은 급여 이상을 받는 모든 사원 정보 조회 서비스 [Map]
+	 * @param searchSalary
+	 * @return
+	 */
+/*	public Map<String, Object> selectSalaryEmp(int searchSalary)throws Exception  {
+		
+		Connection con = getConnection();
+		
+		Map<String,Object> empMap = dao.selectSalaryEmp(con,searchSalary);
+		
+		close(con);
+		
+		return empMap;
+	}	
+	
+*/
+
+
+
+
+
+
+	/**  8. 부서별 급여 합 전체 조회 서비스[List]
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Employee> selectDeptTotalSalary() throws Exception{
+/*	public List<Employee> selectDeptTotalSalary() throws Exception{
 
 		Connection con = getConnection();
 		
@@ -197,6 +224,25 @@ public class EmployeeService {
 		
 		return deptList;
 	}
+*/
+	
+	
+	/** 8. 부서별 급여 합 전체 조회 서비스[Map]
+	 * @return
+	 */
+	public Map<String, Integer> selectDeptTotalSalary() throws Exception {
+
+		Connection con = getConnection();
+		
+		Map<String, Integer> deptMap = dao.selectDeptTotalSalary(con);
+		
+		close(con);
+		
+		return deptMap;
+	}
+
+	
+	
 	
 	
 	/** 9. 주민등록번호가 일치하는 사원 정보 조회 서비스
@@ -230,8 +276,24 @@ public class EmployeeService {
 		close(con);
 		
 		return jobList;
-	}	
-	
+	}
+
+	public int questionStmt() throws Exception {
+		
+		Connection con = getConnection();
+		
+		int result = dao.questionStmt(con);
+		
+		if(result >0) commit(con);
+		else 		  rollback(con);
+		
+		close(con);
+		
+		return result;
+	}
+
+
+
 	
 	
 	/*

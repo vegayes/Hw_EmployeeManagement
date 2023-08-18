@@ -98,7 +98,10 @@
 	</entry>
 	
 	
-	
+	<entry key = "questionStmt">
+		DELETE FROM EMPLOYEE
+		WHERE EMP_NAME = '유은서'
+	</entry>
 	
 	
 	
